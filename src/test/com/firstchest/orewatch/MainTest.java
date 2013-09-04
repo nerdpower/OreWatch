@@ -24,16 +24,19 @@ import com.firstchest.orewatch.Main;
 @PrepareForTest( BlockBreakEvent.class )
 public class MainTest
 {
+	private Main _main;
 	private BlockBreakEvent _mockEvent;
 	private Player _mockPlayer;
 	private Block _mockBlock;
 	private String _givenName;
 	private String _hashName;
-	
+
 	
 	@Before
 	public void setUp() throws Exception
 	{
+		_main = new Main();
+		
 		_givenName = UUID.randomUUID().toString();
 		_hashName = _givenName.toUpperCase();
 
@@ -57,12 +60,11 @@ public class MainTest
 		String expected = _givenName.toUpperCase();
 
 		// MUT
-		Main main = new Main();
-		main.BlockBreak( _mockEvent );
+		_main.BlockBreak( _mockEvent );
 		
 		// verify the player is contained in the hashmap log
 		assertTrue( "Player name not found in hashmap.",
-				main.playerOreLog.containsKey( expected ));
+				_main.playerOreLog.containsKey( expected ));
 	}
 	
 	
@@ -75,12 +77,37 @@ public class MainTest
 		when( _mockBlock.getTypeId() ).thenReturn( Material.STONE.getId() );
 		
 		// MUT
-		Main main = new Main();
-		main.BlockBreak( _mockEvent );
+		_main.BlockBreak( _mockEvent );
 		
 		// verify the stone block break is added to the hashmap
-		int log[] = (int[]) main.playerOreLog.get( _hashName );
-		int actual = log[ Main.STONE_POS ];
-		assertEquals( "Stone not added to hashmap.", 1, actual );
+		int log[] = _main.playerOreLog.get( _hashName );
+		assertLog( log, 1, 0 );
+	}
+	
+	
+	/**
+	 * Test that breaking coal blocks is tracked.
+	 */
+	@Test
+	public void testBlockBreak_CoalIsTracked()
+	{
+		when( _mockBlock.getTypeId() ).thenReturn( Material.COAL_ORE.getId() );
+		
+		//MUT
+		_main.BlockBreak( _mockEvent );
+		
+		// verify the coal block break is added to the hashmap
+		int log[] = _main.playerOreLog.get( _hashName );
+		assertLog( log, 0, 1 );
+	}
+	
+	
+	/**
+	 * Helper method to assert log values. 
+	 */
+	private void assertLog( int[] log, int stone, int coal )
+	{
+		assertEquals( "Incorrect stone value.", stone, log[Main.STONE_POS] );
+		assertEquals( "Incorrect coal value.", coal, log[Main.COAL_POS] );
 	}
 }
