@@ -1,0 +1,10 @@
+name: OreWatch
+main: com.firstchest.orewatch.Main
+version: 0.0.3
+author: nerdpower47
+website: http://dev.bukkit.org/bukkit-plugins/orewatch/
+
+commands:
+    orewatch:
+        description: Commands for keeping an eye on a player's ore mining percentages.
+        usage: /<command> show [player] - show mining percentages for the player.
