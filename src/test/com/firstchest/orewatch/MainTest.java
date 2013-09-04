@@ -1,6 +1,7 @@
 package test.com.firstchest.orewatch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,7 +61,7 @@ public class MainTest
 	 * should be in all upper case.
 	 */
 	@Test
-	public void testBlockBreak_AddPlayerToLog()
+	public void testBlockBreak_AddPlayerToLogInUpperCase()
 	{
 		String expected = _givenName.toUpperCase();
 
@@ -69,15 +70,17 @@ public class MainTest
 		
 		// verify the player is contained in the hashmap log
 		assertTrue( "Player name not found in hashmap.",
-				_main.playerOreLog.containsKey( expected ));
+				_main.PlayerOreLog.containsKey( expected ));
 	}
 	
 	
 	/**
-	 * Test that breaking stone blocks is tracked.
+	 * Test that breaking stone blocks is tracked. Stone is the base to which
+	 * all other breaking is compared so it must be tracked regardless of
+	 * whether it is configured to be.
 	 */
 	@Test
-	public void testBlockBreak_StoneIsTracked()
+	public void testBlockBreak_StoneIsTrackedWithoutBeingConfigured()
 	{
 		when( _mockBlock.getTypeId() ).thenReturn( Material.STONE.getId() );
 		
@@ -85,92 +88,57 @@ public class MainTest
 		_main.BlockBreak( _mockEvent );
 		
 		// verify the stone block break is added to the hashmap
-		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 1, 0, 0 );
-	}
-	
-	
-	/**
-	 * Test that breaking coal blocks is tracked.
-	 */
-	@Test
-	public void testBlockBreak_CoalIsTracked()
-	{
-		when( _mockBlock.getTypeId() ).thenReturn( Material.COAL_ORE.getId() );
-		
-		// MUT
-		_main.BlockBreak( _mockEvent );
-		
-		// verify the coal block break is added to the hashmap
-		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 0, 1, 0 );
-	}
-	
-	
-	/**
-	 * Test that breaking iron blocks is tracked when it occurs at a
-	 * height of 64, which is where it occurs naturally.
-	 */
-	@Test
-	public void testBlockBreak_IronIsTrackedAt64()
-	{
-		when( _mockBlock.getTypeId() ).thenReturn( Material.IRON_ORE.getId() );
-		when( _mockLocation.getBlockY() ).thenReturn( 64 );
-
-		// MUT
-		_main.BlockBreak( _mockEvent );
-		
-		// verify the iron block break is added to the hashmap
-		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 0, 0, 1 );
-	}
-	
-
-	/**
-	 * Test that breaking iron blocks is tracked when it occurs below a
-	 * height of 64, which is where it occurs naturally.
-	 */
-	@Test
-	public void testBlockBreak_IronIsTrackedBelow64()
-	{
-		when( _mockBlock.getTypeId() ).thenReturn( Material.IRON_ORE.getId() );
-		when( _mockLocation.getBlockY() ).thenReturn( new Random().nextInt( 64 ));
-
-		// MUT
-		_main.BlockBreak( _mockEvent );
-		
-		// verify the iron block break is added to the hashmap
-		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 0, 0, 1 );
+		int log[] = _main.PlayerOreLog.get( _hashName );
+		assertEquals( "Stone was not tracked.", 1, log[Material.STONE.getId()] );
 	}
 
 	
 	/**
-	 * Test that breaking iron blocks is NOT tracked when it occurs above a
-	 * height of 64. 
+	 * Test that a configured block is tracked. Valid block IDs are anything
+	 * between 0 and 255.
 	 */
 	@Test
-	public void testBlockBreak_IronIsNotTrackedAbove64()
+	public void testBlockBreak_ConfiguredBlockIsTracked()
 	{
-		when( _mockBlock.getTypeId() ).thenReturn( Material.IRON_ORE.getId() );
-		when( _mockLocation.getBlockY() ).thenReturn( new Random().nextInt( 65 ) + 65 );
+		// configure a block to be tracked (ID between 0 and 255)
+		int blockId = new Random().nextInt( 256 );
+		_main.ConfiguredBlocks.put( blockId, new int[2] ); // REDTAG - better config coming later
+
+		// configure the block mock to simulate this block breaking 
+		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 		
-		// MUT
+		// mut
 		_main.BlockBreak( _mockEvent );
 		
-		// verify the iron block break was not added to the hashmap
-		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 0, 0, 0 );
+		// verify the configured block was incremented in the hashmap
+		assertLog( blockId, 1 );
 	}
 	
 	
 	/**
-	 * Helper method to assert log values. 
+	 * Test that a block not configured for tracking is not logged.
 	 */
-	private void assertLog( int[] log, int stone, int coal, int iron )
+	@Test
+	public void testBlockBreak_NonConfiguredBlockIsNotTracked()
 	{
-		assertEquals( "Incorrect stone value.", stone, log[Main.STONE_POS] );
-		assertEquals( "Incorrect coal value.", coal, log[Main.COAL_POS] );
-		assertEquals( "Incorrect iron value.", iron, log[Main.IRON_POS] );
+		// simulate any random block breaking
+		int blockId = new Random().nextInt( 256 );
+		when( _mockBlock.getTypeId() ).thenReturn( blockId );
+
+		// mut
+		_main.BlockBreak( _mockEvent );
+		
+		// verify the block was not incremented in the hashmap
+		assertLog( blockId, 0 );
+	}
+	
+	
+	/**
+	 * Helper function to assert a specific value in the hashmap.
+	 */
+	private void assertLog( int blockId, int expected )
+	{
+		int log[] = _main.PlayerOreLog.get( _hashName );
+		assertEquals( "Block [" + blockId + "] value incorrect.", expected, log[blockId] );
 	}
 }
