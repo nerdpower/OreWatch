@@ -13,7 +13,8 @@ public final class Main
 {
 	public static final int STONE_POS = 0;
 	public static final int COAL_POS = 1;
-	public static final int POS_SIZE = 2;
+	public static final int IRON_POS = 2;
+	public static final int POS_SIZE = 3;
 	
 	public HashMap<String, int[]> playerOreLog = new HashMap<String, int[]>();
 
@@ -30,8 +31,10 @@ public final class Main
 		
 		if ( blockId == Material.STONE.getId() )
 			frequency[STONE_POS]++;
-		else
+		else if ( blockId == Material.COAL_ORE.getId() )
 			frequency[COAL_POS]++;
+		else if ( block.getLocation().getBlockY() <= 64 )
+			frequency[IRON_POS]++;
 		
 		playerOreLog.put( player, frequency );
 	}

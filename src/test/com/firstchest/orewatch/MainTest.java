@@ -4,8 +4,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Random;
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -28,6 +30,7 @@ public class MainTest
 	private BlockBreakEvent _mockEvent;
 	private Player _mockPlayer;
 	private Block _mockBlock;
+	private Location _mockLocation;
 	private String _givenName;
 	private String _hashName;
 
@@ -43,7 +46,9 @@ public class MainTest
 		_mockEvent = PowerMockito.mock( BlockBreakEvent.class );
 		_mockPlayer = mock( Player.class );
 		_mockBlock = mock( Block.class );
+		_mockLocation = mock( Location.class );
 		
+		when( _mockBlock.getLocation() ).thenReturn( _mockLocation );
 		when( _mockPlayer.getName() ).thenReturn( _givenName );
 		when( _mockEvent.getPlayer() ).thenReturn( _mockPlayer );
 		when( _mockEvent.getBlock() ).thenReturn( _mockBlock );
@@ -81,7 +86,7 @@ public class MainTest
 		
 		// verify the stone block break is added to the hashmap
 		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 1, 0 );
+		assertLog( log, 1, 0, 0 );
 	}
 	
 	
@@ -93,21 +98,79 @@ public class MainTest
 	{
 		when( _mockBlock.getTypeId() ).thenReturn( Material.COAL_ORE.getId() );
 		
-		//MUT
+		// MUT
 		_main.BlockBreak( _mockEvent );
 		
 		// verify the coal block break is added to the hashmap
 		int log[] = _main.playerOreLog.get( _hashName );
-		assertLog( log, 0, 1 );
+		assertLog( log, 0, 1, 0 );
+	}
+	
+	
+	/**
+	 * Test that breaking iron blocks is tracked when it occurs at a
+	 * height of 64, which is where it occurs naturally.
+	 */
+	@Test
+	public void testBlockBreak_IronIsTrackedAt64()
+	{
+		when( _mockBlock.getTypeId() ).thenReturn( Material.IRON_ORE.getId() );
+		when( _mockLocation.getBlockY() ).thenReturn( 64 );
+
+		// MUT
+		_main.BlockBreak( _mockEvent );
+		
+		// verify the iron block break is added to the hashmap
+		int log[] = _main.playerOreLog.get( _hashName );
+		assertLog( log, 0, 0, 1 );
+	}
+	
+
+	/**
+	 * Test that breaking iron blocks is tracked when it occurs below a
+	 * height of 64, which is where it occurs naturally.
+	 */
+	@Test
+	public void testBlockBreak_IronIsTrackedBelow64()
+	{
+		when( _mockBlock.getTypeId() ).thenReturn( Material.IRON_ORE.getId() );
+		when( _mockLocation.getBlockY() ).thenReturn( new Random().nextInt( 64 ));
+
+		// MUT
+		_main.BlockBreak( _mockEvent );
+		
+		// verify the iron block break is added to the hashmap
+		int log[] = _main.playerOreLog.get( _hashName );
+		assertLog( log, 0, 0, 1 );
+	}
+
+	
+	/**
+	 * Test that breaking iron blocks is NOT tracked when it occurs above a
+	 * height of 64. 
+	 */
+	@Test
+	public void testBlockBreak_IronIsNotTrackedAbove64()
+	{
+		when( _mockBlock.getTypeId() ).thenReturn( Material.IRON_ORE.getId() );
+		when( _mockLocation.getBlockY() ).thenReturn( new Random().nextInt( 65 ) + 65 );
+		
+		// MUT
+		_main.BlockBreak( _mockEvent );
+		
+		// verify the iron block break was not added to the hashmap
+		int log[] = _main.playerOreLog.get( _hashName );
+		assertLog( log, 0, 0, 0 );
 	}
 	
 	
 	/**
 	 * Helper method to assert log values. 
 	 */
-	private void assertLog( int[] log, int stone, int coal )
+	private void assertLog( int[] log, int stone, int coal, int iron )
 	{
 		assertEquals( "Incorrect stone value.", stone, log[Main.STONE_POS] );
 		assertEquals( "Incorrect coal value.", coal, log[Main.COAL_POS] );
+		assertEquals( "Incorrect iron value.", iron, log[Main.IRON_POS] );
 	}
 }
