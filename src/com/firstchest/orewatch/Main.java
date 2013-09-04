@@ -15,6 +15,8 @@ public final class Main
 	@EventHandler( priority = EventPriority.MONITOR ) // REDTAG can this be tested?
 	public void BlockBreak( BlockBreakEvent event )
 	{
-		playerOreLog.put( "FOONAME", new int[0] );
+		String player = event.getPlayer().getName().toUpperCase();
+		
+		playerOreLog.put( player, new int[0] );
 	}
 }

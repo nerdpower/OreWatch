@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.junit.Test;
@@ -30,14 +32,17 @@ public class MainTest {
 		BlockBreakEvent mockEvent = PowerMockito.mock( BlockBreakEvent.class );
 		Player mockPlayer = mock( Player.class );
 
-		when( mockPlayer.getName() ).thenReturn( "fooName" );
+		String given = UUID.randomUUID().toString();
+		when( mockPlayer.getName() ).thenReturn( given );
+		when( mockEvent.getPlayer() ).thenReturn( mockPlayer );
 		
 		// MUT
 		Main main = new Main();
 		main.BlockBreak( mockEvent );
 		
 		// verify the player is contained in the hashmap log
+		String expected = given.toUpperCase();
 		assertTrue( "Player name not found in hashmap.",
-				main.playerOreLog.containsKey( "FOONAME" )); // REDTAG randomize the name
+				main.playerOreLog.containsKey( expected ));
 	}
 }
