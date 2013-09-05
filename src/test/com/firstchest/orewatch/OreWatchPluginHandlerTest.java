@@ -20,14 +20,14 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.firstchest.orewatch.BlockBreakHandler;
+import com.firstchest.orewatch.OreWatchPluginHandler;
 
 
 @RunWith( PowerMockRunner.class )
 @PrepareForTest( BlockBreakEvent.class )
-public class BlockBreakHandlerTest
+public class OreWatchPluginHandlerTest
 {
-	private BlockBreakHandler _handler;
+	private OreWatchPluginHandler _handler;
 	private BlockBreakEvent _mockEvent;
 	private Player _mockPlayer;
 	private Block _mockBlock;
@@ -41,7 +41,7 @@ public class BlockBreakHandlerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		_handler = new BlockBreakHandler();
+		_handler = new OreWatchPluginHandler();
 		
 		_givenName = UUID.randomUUID().toString();
 		_hashName = _givenName.toUpperCase();
@@ -196,7 +196,7 @@ public class BlockBreakHandlerTest
 	 */
 	private void mut()
 	{
-		_handler.BlockBreak( _mockEvent );
+		_handler.blockBreakEventHandler( _mockEvent );
 	}
 	
 	

@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin implements Listener 
 {
-	private BlockBreakHandler _blockBreakHandler;
+	private OreWatchPluginHandler _handler;
 	
 	
 	/**
@@ -17,17 +17,17 @@ public final class Main extends JavaPlugin implements Listener
 	 */
 	public Main()
 	{
-		_blockBreakHandler = new BlockBreakHandler();
+		_handler = new OreWatchPluginHandler();
 	}
 	
 	
 	/**
 	 * Constructor for testing that implements poor man's dependency injection.
-	 * @param blockBreakHandler
+	 * @param handler
 	 */
-	public Main( BlockBreakHandler blockBreakHandler )
+	public Main( OreWatchPluginHandler handler )
 	{
-		_blockBreakHandler = blockBreakHandler;
+		_handler = handler;
 	}
 	
 	
@@ -36,8 +36,8 @@ public final class Main extends JavaPlugin implements Listener
 	 * @param event
 	 */
 	@EventHandler( priority = EventPriority.MONITOR )
-	public void BlockBreak( BlockBreakEvent event )
+	public void blockBreakEvent( BlockBreakEvent event )
 	{
-		_blockBreakHandler.BlockBreak( event );
+		_handler.blockBreakEventHandler( event );
 	}
 }

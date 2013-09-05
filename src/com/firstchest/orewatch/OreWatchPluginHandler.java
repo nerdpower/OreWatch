@@ -4,18 +4,15 @@ import java.util.HashMap;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public class BlockBreakHandler
+public class OreWatchPluginHandler
 {
 	public HashMap<String, int[]> PlayerOreLog = new HashMap<String, int[]>();
 	public HashMap<Integer, int[]> ConfiguredBlocks = new HashMap<Integer, int[]>();
 
 	
-	@EventHandler( priority = EventPriority.MONITOR )
-	public void BlockBreak( BlockBreakEvent event )
+	public void blockBreakEventHandler( BlockBreakEvent event )
 	{
 		String player = event.getPlayer().getName().toUpperCase();
 		

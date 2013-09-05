@@ -9,7 +9,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.firstchest.orewatch.BlockBreakHandler;
+import com.firstchest.orewatch.OreWatchPluginHandler;
 import com.firstchest.orewatch.Main;
 
 
@@ -23,14 +23,14 @@ public class MainTest
 	@Test
 	public void BlockBreakEventHookedUp()
 	{	
-		BlockBreakHandler mockHandler = mock( BlockBreakHandler.class );
+		OreWatchPluginHandler mockHandler = mock( OreWatchPluginHandler.class );
 		BlockBreakEvent mockEvent = PowerMockito.mock( BlockBreakEvent.class );
 
 		// mut
 		Main main = new Main( mockHandler );
-		main.BlockBreak( mockEvent );
+		main.blockBreakEvent( mockEvent );
 		
 		// verify the handler class was called
-		verify( mockHandler ).BlockBreak( mockEvent );
+		verify( mockHandler ).blockBreakEventHandler( mockEvent );
 	}
 }
