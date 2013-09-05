@@ -15,7 +15,7 @@ public final class Main
 	public HashMap<Integer, int[]> ConfiguredBlocks = new HashMap<Integer, int[]>();
 	
 
-	@EventHandler( priority = EventPriority.MONITOR ) // REDTAG can this be tested?
+	@EventHandler( priority = EventPriority.MONITOR )
 	public void BlockBreak( BlockBreakEvent event )
 	{
 		String player = event.getPlayer().getName().toUpperCase();
