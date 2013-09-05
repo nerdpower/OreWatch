@@ -31,6 +31,10 @@ public final class Main extends JavaPlugin implements Listener
 	}
 	
 	
+	/**
+	 * Event fired by bukkit when a block is broken.
+	 * @param event
+	 */
 	@EventHandler( priority = EventPriority.MONITOR )
 	public void BlockBreak( BlockBreakEvent event )
 	{
