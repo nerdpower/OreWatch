@@ -65,8 +65,7 @@ public class MainTest
 	{
 		String expected = _givenName.toUpperCase();
 
-		// MUT
-		_main.BlockBreak( _mockEvent );
+		mut();
 		
 		// verify the player is contained in the hashmap log
 		assertTrue( "Player name not found in hashmap.",
@@ -84,8 +83,7 @@ public class MainTest
 	{
 		when( _mockBlock.getTypeId() ).thenReturn( Material.STONE.getId() );
 		
-		// MUT
-		_main.BlockBreak( _mockEvent );
+		mut();
 		
 		// verify the stone block break is added to the hashmap
 		int log[] = _main.PlayerOreLog.get( _hashName );
@@ -102,13 +100,12 @@ public class MainTest
 	{
 		// configure a block to be tracked (ID between 0 and 255)
 		int blockId = new Random().nextInt( 256 );
-		_main.ConfiguredBlocks.put( blockId, new int[2] ); // REDTAG - better config coming later
+		_main.ConfiguredBlocks.put( blockId, new int[1] ); // REDTAG - better config coming later
 
 		// configure the block mock to simulate this block breaking 
 		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 		
-		// mut
-		_main.BlockBreak( _mockEvent );
+		mut();
 		
 		// verify the configured block was incremented in the hashmap
 		assertLog( blockId, 1 );
@@ -125,11 +122,72 @@ public class MainTest
 		int blockId = new Random().nextInt( 256 );
 		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 
-		// mut
-		_main.BlockBreak( _mockEvent );
+		mut();
 		
 		// verify the block was not incremented in the hashmap
 		assertLog( blockId, 0 );
+	}
+	
+
+	/**
+	 * Test that breaking a block above the height limit specified will not
+	 * add that block to the log.
+	 */
+	@Test
+	public void testBlockBreak_IsNotTrackedAboveSpecifiedHeight()
+	{
+		// configure the height limit
+		int height = new Random().nextInt( 64 ) + 64;
+		int[] config = new int[1];
+		config[0] = height;
+		
+		// simulate any random block breaking one above the specific height
+		int blockId = new Random().nextInt( 256 );
+		_main.ConfiguredBlocks.put( blockId, config );
+		when( _mockLocation.getBlockY() ).thenReturn( height + 1 );
+		when( _mockBlock.getTypeId() ).thenReturn( blockId );
+		
+		mut();
+		
+		// verify the block was not incremented in the hashmap
+		assertLog( blockId, 0 );
+	}
+	
+
+	/**
+	 * Test that breaking a block at the height limit specified will add
+	 * that block to the log.
+	 */
+	@Test
+	public void testBlockBreak_IsTrackedAtSpecifiedHeight()
+	{
+		// configure the height limit
+		int height = new Random().nextInt( 128 ) + 1;
+		int[] config = new int[1];
+		config[0] = height;
+		
+		// simulate any random block breaking at the specific height
+		int blockId = new Random().nextInt( 256 );
+		_main.ConfiguredBlocks.put( blockId,  config );
+		when( _mockLocation.getBlockY() ).thenReturn( height );
+		when( _mockBlock.getTypeId() ).thenReturn( blockId );
+		
+		mut();
+		
+		// verify the block was incremented in the hashmap
+		assertLog( blockId, 1 );
+	}
+	
+	
+	// REDTAG - need to test that existing block logs aren't lost
+	
+	
+	/**
+	 * Helper function to run the method under test (mut).
+	 */
+	private void mut()
+	{
+		_main.BlockBreak( _mockEvent );
 	}
 	
 	

@@ -26,13 +26,20 @@ public final class Main
 		int blockId = block.getTypeId();
 
 		if ( blockId == Material.STONE.getId() )
+		{
 			frequency[blockId]++;
+		}
 		else if ( ConfiguredBlocks.containsKey( blockId ))
-			frequency[blockId]++;
+		{
+			int[] config = ConfiguredBlocks.get( blockId );
+			
+			// config[0] is height limit -- REDTAG make this better, not a magic number
+			if ( config[0] < 1 )
+				frequency[blockId]++;
+			else if ( block.getLocation().getBlockY() <= config[0] )
+				frequency[blockId]++;
+		}
 
-//		else if ( block.getLocation().getBlockY() <= 64 )
-//			frequency[IRON_POS]++;
-		
 		PlayerOreLog.put( player, frequency );
 	}
 }
