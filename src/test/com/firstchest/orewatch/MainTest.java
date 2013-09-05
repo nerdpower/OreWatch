@@ -214,7 +214,7 @@ public class MainTest
 	 * Test that events are registered with the server.
 	 */
 	@Test
-	public void testOnDisable_RegisterEvents()
+	public void testOnEnable_RegisterEvents()
 	{
 		// mut
 		_main.onEnable_Handler( _mockServer );
