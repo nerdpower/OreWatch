@@ -37,7 +37,7 @@ public final class Main
 		{
 			int[] config = ConfiguredBlocks.get( blockId );
 			
-			// config[0] is height limit -- REDTAG make this better, not a magic number
+			// config[0] is height limit
 			if ( config[0] < 1 )
 				frequency[blockId]++;
 			else if ( block.getLocation().getBlockY() <= config[0] )
