@@ -20,7 +20,11 @@ public final class Main
 	{
 		String player = event.getPlayer().getName().toUpperCase();
 		
-		int frequency[] = new int[256];
+		int[] frequency;
+		if ( PlayerOreLog.containsKey( player ))
+			frequency = PlayerOreLog.get( player );
+		else
+			frequency = new int[256];
 		
 		Block block = event.getBlock();
 		int blockId = block.getTypeId();

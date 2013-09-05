@@ -179,7 +179,28 @@ public class MainTest
 	}
 	
 	
-	// REDTAG - need to test that existing block logs aren't lost
+	/**
+	 * Test that existing logs are not lost when a new block is broken.
+	 */
+	@Test
+	public void testBlockBreak_ExistingLogNotLost()
+	{
+		// configure a block to be tracked
+		int blockId = new Random().nextInt( 256 );
+		_main.ConfiguredBlocks.put( blockId, new int[1] );
+		when( _mockBlock.getTypeId() ).thenReturn( blockId );
+
+		// create an existing log for this block
+		// REDTAG this knows a bit too much about the inner workings of the class under test
+		int log[] = new int[256];
+		log[blockId]++;
+		_main.PlayerOreLog.put( _hashName, log );
+		
+		mut();
+		
+		// verify the configured block was incremented on top of the existing value
+		assertLog( blockId, 2 );
+	}
 	
 	
 	/**
