@@ -3,16 +3,18 @@ package test.com.firstchest.orewatch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +34,8 @@ public class MainTest
 	private Player _mockPlayer;
 	private Block _mockBlock;
 	private Location _mockLocation;
+	private Server _mockServer;
+	private PluginManager _mockPluginManager;
 	private String _givenName;
 	private String _hashName;
 
@@ -48,11 +52,14 @@ public class MainTest
 		_mockPlayer = mock( Player.class );
 		_mockBlock = mock( Block.class );
 		_mockLocation = mock( Location.class );
+		_mockServer = mock( Server.class );
+		_mockPluginManager = mock( PluginManager.class );
 		
 		when( _mockBlock.getLocation() ).thenReturn( _mockLocation );
 		when( _mockPlayer.getName() ).thenReturn( _givenName );
 		when( _mockEvent.getPlayer() ).thenReturn( _mockPlayer );
 		when( _mockEvent.getBlock() ).thenReturn( _mockBlock );
+		when( _mockServer.getPluginManager() ).thenReturn( _mockPluginManager );
 	}
 
 	
@@ -200,6 +207,19 @@ public class MainTest
 		
 		// verify the configured block was incremented on top of the existing value
 		assertLog( blockId, 2 );
+	}
+	
+	
+	/**
+	 * Test that events are registered with the server.
+	 */
+	@Test
+	public void testOnDisable_RegisterEvents()
+	{
+		// mut
+		_main.onEnable_Handler( _mockServer );
+		
+		verify( _mockPluginManager ).registerEvents( _main, _main );
 	}
 	
 	
