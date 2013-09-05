@@ -12,6 +12,11 @@ public class OreWatchPluginHandler
 	public HashMap<Integer, int[]> ConfiguredBlocks = new HashMap<Integer, int[]>();
 
 	
+	public void onEnableHandler()
+	{
+	}
+	
+	
 	public void blockBreakEventHandler( BlockBreakEvent event )
 	{
 		String player = event.getPlayer().getName().toUpperCase();

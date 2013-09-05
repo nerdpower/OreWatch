@@ -32,6 +32,15 @@ public final class Main extends JavaPlugin implements Listener
 	
 	
 	/**
+	 * Event fired by bukkit when the plugin is enabled.
+	 */
+	public void onEnable()
+	{
+		_handler.onEnableHandler();
+	}
+	
+	
+	/**
 	 * Event fired by bukkit when a block is broken.
 	 * @param event
 	 */

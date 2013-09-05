@@ -18,7 +18,7 @@ import com.firstchest.orewatch.Main;
 public class MainTest
 {
 	/**
-	 * Test that the BlockBreak event handler calls the handler class.
+	 * Test that BlockBreakEvent calls the handler class.
 	 */
 	@Test
 	public void BlockBreakEventHookedUp()
@@ -32,5 +32,22 @@ public class MainTest
 		
 		// verify the handler class was called
 		verify( mockHandler ).blockBreakEventHandler( mockEvent );
+	}
+
+
+	/**
+	 * Test that onEnable event calls the handler class.
+	 */
+	@Test
+	public void onEnableEventHookedUp()
+	{	
+		OreWatchPluginHandler mockHandler = mock( OreWatchPluginHandler.class );
+
+		// mut
+		Main main = new Main( mockHandler );
+		main.onEnable();
+		
+		// verify the handler class was called
+		verify( mockHandler ).onEnableHandler();
 	}
 }
