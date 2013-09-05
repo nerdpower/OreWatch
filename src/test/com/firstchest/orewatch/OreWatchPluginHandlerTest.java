@@ -67,11 +67,11 @@ public class OreWatchPluginHandlerTest
 	 * whether it is configured to be.
 	 */
 	@Test
-	public void StoneIsTrackedWithoutBeingConfigured()
+	public void blockBreakEventHandler_StoneIsTrackedWithoutBeingConfigured()
 	{
 		when( _mockBlock.getTypeId() ).thenReturn( Material.STONE.getId() );
 		
-		mut();
+		blockBreakEventHandler_mut();
 		
 		// verify the stone block break is added to the hashmap
 		int log[] = _handler.PlayerOreLog.get( _hashName );
@@ -84,7 +84,7 @@ public class OreWatchPluginHandlerTest
 	 * between 0 and 255.
 	 */
 	@Test
-	public void ConfiguredBlockIsTracked()
+	public void blockBreakEventHandler_ConfiguredBlockIsTracked()
 	{
 		// configure a block to be tracked (ID between 0 and 255)
 		int blockId = new Random().nextInt( 256 );
@@ -93,7 +93,7 @@ public class OreWatchPluginHandlerTest
 		// configure the block mock to simulate this block breaking 
 		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 		
-		mut();
+		blockBreakEventHandler_mut();
 		
 		// verify the configured block was incremented in the hashmap
 		assertLog( blockId, 1 );
@@ -104,13 +104,13 @@ public class OreWatchPluginHandlerTest
 	 * Test that a block not configured for tracking is not logged.
 	 */
 	@Test
-	public void NonConfiguredBlockIsNotTracked()
+	public void blockBreakEventHandler_NonConfiguredBlockIsNotTracked()
 	{
 		// simulate any random block breaking
 		int blockId = new Random().nextInt( 256 );
 		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 
-		mut();
+		blockBreakEventHandler_mut();
 		
 		// verify the block was not incremented in the hashmap
 		assertLog( blockId, 0 );
@@ -122,7 +122,7 @@ public class OreWatchPluginHandlerTest
 	 * add that block to the log.
 	 */
 	@Test
-	public void IsNotTrackedAboveSpecifiedHeight()
+	public void blockBreakEventHandler_IsNotTrackedAboveSpecifiedHeight()
 	{
 		// configure the height limit
 		int height = new Random().nextInt( 64 ) + 64;
@@ -135,7 +135,7 @@ public class OreWatchPluginHandlerTest
 		when( _mockLocation.getBlockY() ).thenReturn( height + 1 );
 		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 		
-		mut();
+		blockBreakEventHandler_mut();
 		
 		// verify the block was not incremented in the hashmap
 		assertLog( blockId, 0 );
@@ -147,7 +147,7 @@ public class OreWatchPluginHandlerTest
 	 * that block to the log.
 	 */
 	@Test
-	public void IsTrackedAtSpecifiedHeight()
+	public void blockBreakEventHandler_IsTrackedAtSpecifiedHeight()
 	{
 		// configure the height limit
 		int height = new Random().nextInt( 128 ) + 1;
@@ -160,7 +160,7 @@ public class OreWatchPluginHandlerTest
 		when( _mockLocation.getBlockY() ).thenReturn( height );
 		when( _mockBlock.getTypeId() ).thenReturn( blockId );
 		
-		mut();
+		blockBreakEventHandler_mut();
 		
 		// verify the block was incremented in the hashmap
 		assertLog( blockId, 1 );
@@ -171,7 +171,7 @@ public class OreWatchPluginHandlerTest
 	 * Test that existing logs are not lost when a new block is broken.
 	 */
 	@Test
-	public void ExistingLogNotLost()
+	public void blockBreakEventHandler_ExistingLogNotLost()
 	{
 		// configure a block to be tracked
 		int blockId = new Random().nextInt( 256 );
@@ -184,7 +184,7 @@ public class OreWatchPluginHandlerTest
 		log[blockId]++;
 		_handler.PlayerOreLog.put( _hashName, log );
 		
-		mut();
+		blockBreakEventHandler_mut();
 		
 		// verify the configured block was incremented on top of the existing value
 		assertLog( blockId, 2 );
@@ -194,7 +194,7 @@ public class OreWatchPluginHandlerTest
 	/**
 	 * Helper function to run the method under test (mut).
 	 */
-	private void mut()
+	private void blockBreakEventHandler_mut()
 	{
 		_handler.blockBreakEventHandler( _mockEvent );
 	}
