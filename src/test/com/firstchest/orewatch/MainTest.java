@@ -1,20 +1,19 @@
 package test.com.firstchest.orewatch;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.bukkit.event.block.BlockBreakEvent;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.firstchest.orewatch.OreWatchPluginHandler;
 import com.firstchest.orewatch.Main;
+import com.firstchest.orewatch.OreWatchPluginHandler;
 
 
 @RunWith( PowerMockRunner.class )
-@PrepareForTest( Main.class )
 public class MainTest
 {
 	/**

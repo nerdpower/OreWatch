@@ -1,7 +1,9 @@
 package test.com.firstchest.orewatch;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Random;
 import java.util.UUID;
@@ -20,6 +22,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.firstchest.orewatch.Main;
 import com.firstchest.orewatch.OreWatchPluginHandler;
 
 
@@ -51,7 +54,7 @@ public class OreWatchPluginHandlerTest
 		_mockBlock = mock( Block.class );
 		_mockLocation = mock( Location.class );
 		_mockServer = mock( Server.class );
-		_mockPluginManager = mock( PluginManager.class );
+		_mockPluginManager = PowerMockito.mock( PluginManager.class );
 		
 		when( _mockBlock.getLocation() ).thenReturn( _mockLocation );
 		when( _mockPlayer.getName() ).thenReturn( _givenName );
@@ -60,6 +63,29 @@ public class OreWatchPluginHandlerTest
 		when( _mockServer.getPluginManager() ).thenReturn( _mockPluginManager );
 	}
 
+	
+	/**
+	 * Test that bukkit event handlers are registered.
+	 */
+	@Test
+	public void onEnableHandler_RegisterEvents()
+	{
+		Main plugin = new Main();
+		Server mockServer = mock( Server.class );
+		PluginManager mockPluginManager = mock ( PluginManager.class );
+		
+		when( mockServer.getPluginManager() ).thenReturn( mockPluginManager );
+		
+		// mut
+		JavaPluginTestShim getServerHandler = new JavaPluginTestShim( mockServer ); 
+		OreWatchPluginHandler handler = new OreWatchPluginHandler( getServerHandler );
+		handler.plugin = plugin;
+		handler.onEnableHandler();
+		
+		verify( mockServer ).getPluginManager();
+		verify( mockPluginManager ).registerEvents( plugin, plugin );
+	}
+	
 	
 	/**
 	 * Test that breaking stone blocks is tracked. Stone is the base to which

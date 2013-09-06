@@ -8,12 +8,31 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 public class OreWatchPluginHandler
 {
+	// REDTAG would be nice to throw an exception if any function is called without first setting plugin
 	public HashMap<String, int[]> PlayerOreLog = new HashMap<String, int[]>();
 	public HashMap<Integer, int[]> ConfiguredBlocks = new HashMap<Integer, int[]>();
+	public Main plugin;
 
+	private JavaPluginShimInterface _getServerHandler;
+	
+	public OreWatchPluginHandler()
+	{
+		this( new JavaPluginProductionShim() ); // REDTAG is this tested / can it be tested?
+	}
+	
+	/**
+	 * Constructor that implements poor man's dependency injection.
+	 * @param getServerHandler
+	 */
+	public OreWatchPluginHandler( JavaPluginShimInterface getServerHandler )
+	{
+		_getServerHandler = getServerHandler;
+	}
+	
 	
 	public void onEnableHandler()
 	{
+		_getServerHandler.getServer( plugin ).getPluginManager().registerEvents( plugin, plugin );
 	}
 	
 	

@@ -7,7 +7,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public final class Main extends JavaPlugin implements Listener 
+public class Main extends JavaPlugin implements Listener 
 {
 	private OreWatchPluginHandler _handler;
 	
@@ -17,7 +17,7 @@ public final class Main extends JavaPlugin implements Listener
 	 */
 	public Main()
 	{
-		_handler = new OreWatchPluginHandler();
+		this( new OreWatchPluginHandler() );
 	}
 	
 	
@@ -28,6 +28,7 @@ public final class Main extends JavaPlugin implements Listener
 	public Main( OreWatchPluginHandler handler )
 	{
 		_handler = handler;
+		_handler.plugin = this;
 	}
 	
 	
