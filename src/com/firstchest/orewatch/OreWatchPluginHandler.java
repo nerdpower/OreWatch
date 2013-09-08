@@ -1,5 +1,6 @@
 package com.firstchest.orewatch;
 
+import java.io.File;
 import java.util.HashMap;
 
 import org.bukkit.Material;
@@ -47,8 +48,12 @@ public class OreWatchPluginHandler
 	
 	public void initConfig( Main plugin )
 	{
-		plugin.getLoggerShim().info( "No config file exists. Creating a new config file." );
-		plugin.saveDefaultConfigShim();
+		File configFile = plugin.getFile( plugin.getDataFolderShim(), "config.yml" );
+		if ( !configFile.exists() )
+		{
+			plugin.getLoggerShim().info( "No config file exists. Creating a new config file." );
+			plugin.saveDefaultConfigShim();
+		}
 	}
 	
 	

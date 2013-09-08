@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
+import java.io.File;
 import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -94,9 +96,16 @@ public class OreWatchPluginHandlerTest
 	public void initConfig_NoExistingConfig()
 	{
 		Main mockPlugin = mock( Main.class );
+		File mockFile = mock( File.class );
+		File parentFolder = new File( UUID.randomUUID().toString() );
 		Logger mockLogger = mock( Logger.class );
 		
 		when( mockPlugin.getLoggerShim() ).thenReturn( mockLogger );
+		
+		//configure the file to not exist
+		when( mockPlugin.getDataFolderShim() ).thenReturn( parentFolder );
+		when( mockPlugin.getFile( parentFolder, "config.yml" )).thenReturn( mockFile );
+		when( mockFile.exists() ).thenReturn( false );
 		
 		// mut
 		new OreWatchPluginHandler().initConfig( mockPlugin );
@@ -110,11 +119,24 @@ public class OreWatchPluginHandlerTest
 	/**
 	 * Test that nothing happens when a config already exists.
 	 */
+	@Test
 	public void initConfig_ExistingConfig()
 	{
-		// REDTAG
-		// logger not retrieved
-		// save default config not called
+		Main mockPlugin = mock( Main.class );
+		File mockFile = mock( File.class );
+		File parentFolder = new File( UUID.randomUUID().toString() );
+		
+		// configure the file to exist
+		when( mockPlugin.getDataFolderShim() ).thenReturn( parentFolder );
+		when( mockPlugin.getFile( parentFolder, "config.yml" )).thenReturn( mockFile );
+		when( mockFile.exists() ).thenReturn( true );
+		
+		// mut
+		new OreWatchPluginHandler().initConfig( mockPlugin );
+		
+		// verify the logger is never retrieved and the function to save a default config is not executed
+		verify( mockPlugin, never() ).getLoggerShim();
+		verify( mockPlugin, never() ).saveDefaultConfigShim();
 	}
 	
 	

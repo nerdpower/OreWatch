@@ -1,5 +1,6 @@
 package com.firstchest.orewatch;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -58,6 +59,17 @@ public class Main extends JavaPlugin implements Listener
 	
 	
 	/**
+	 * Mockable function to allow us to test the parameters being
+	 * used to find a file without having to integrate the test
+	 * with the actual file system. 
+	 */
+	public File getFile( File parentFolder, String filename )
+	{
+		return new File( parentFolder, filename );
+	}
+
+	
+	/**
 	 * It is not possible to mock and verify JavaPlugin functions because
 	 * PluginBase (org.bukkit.plugin) overrides equals() and hashCode() and declares them
 	 * final, which is not to the liking of PowerMock. See the following:
@@ -69,7 +81,8 @@ public class Main extends JavaPlugin implements Listener
 	 * Any JavaPlugin function that is needed above is shimmed here and the shim
 	 * is used instead so that a mock can be injected for testing. 
 	 */
-	public Server getServerShim() { return this.getServer(); }
+	public File getDataFolderShim() { return this.getDataFolder(); }
 	public Logger getLoggerShim() { return this.getLogger(); }
-	public void saveDefaultConfigShim() { saveDefaultConfig(); }
-}
+	public Server getServerShim() { return this.getServer(); }
+	public void saveDefaultConfigShim() { this.saveDefaultConfig(); }
+	}

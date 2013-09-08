@@ -1,7 +1,11 @@
 package test.com.firstchest.orewatch;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import java.io.File;
+import java.util.UUID;
 
 import org.bukkit.event.block.BlockBreakEvent;
 import org.junit.Test;
@@ -51,5 +55,26 @@ public class MainTest
 		verify( mockHandler ).loadConfig( plugin );
 		verify( mockHandler ).loadPlayerLog( plugin );
 		verify( mockHandler ).registerEvents( plugin );
+	}
+	
+	
+	/**
+	 * Test that a new File object is created with the given pathname
+	 * and filename.
+	 */
+	@Test
+	public void getFile_Success()
+	{
+		// setup expected path and file names
+		String expectedPathname = "path-" + UUID.randomUUID().toString();
+		File expectedFolder = new File( expectedPathname );
+		String expectedFilename = "file-" + UUID.randomUUID().toString();
+		
+		// mut
+		Main plugin = new Main();
+		File actual = plugin.getFile( expectedFolder, expectedFilename );
+		
+		assertEquals( expectedPathname, actual.getParent() );
+		assertEquals( expectedFilename, actual.getName() );
 	}
 }
