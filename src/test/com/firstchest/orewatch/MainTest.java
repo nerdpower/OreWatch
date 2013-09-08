@@ -35,7 +35,7 @@ public class MainTest
 
 
 	/**
-	 * Test that onEnable event calls the handler class.
+	 * Test that onEnable event calls the desired functionality.
 	 */
 	@Test
 	public void onEnableEventHookedUp()
@@ -43,10 +43,13 @@ public class MainTest
 		OreWatchPluginHandler mockHandler = mock( OreWatchPluginHandler.class );
 
 		// mut
-		Main main = new Main( mockHandler );
-		main.onEnable();
+		Main plugin = new Main( mockHandler );
+		plugin.onEnable();
 		
-		// verify the handler class was called
-		verify( mockHandler ).onEnableHandler();
+		// verify the calls
+		verify( mockHandler ).initConfig( plugin );
+		verify( mockHandler ).loadConfig( plugin );
+		verify( mockHandler ).loadPlayerLog( plugin );
+		verify( mockHandler ).registerEvents( plugin );
 	}
 }

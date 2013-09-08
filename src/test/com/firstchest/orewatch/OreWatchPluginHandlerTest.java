@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -68,22 +69,52 @@ public class OreWatchPluginHandlerTest
 	 * Test that bukkit event handlers are registered.
 	 */
 	@Test
-	public void onEnableHandler_RegisterEvents()
+	public void registerEvents_Success()
 	{
-		Main plugin = new Main();
+		Main mockPlugin = mock( Main.class );
 		Server mockServer = mock( Server.class );
 		PluginManager mockPluginManager = mock ( PluginManager.class );
 		
+		when( mockPlugin.getServerShim() ).thenReturn( mockServer );
 		when( mockServer.getPluginManager() ).thenReturn( mockPluginManager );
 		
 		// mut
-		JavaPluginTestShim getServerHandler = new JavaPluginTestShim( mockServer ); 
-		OreWatchPluginHandler handler = new OreWatchPluginHandler( getServerHandler );
-		handler.plugin = plugin;
-		handler.onEnableHandler();
+		new OreWatchPluginHandler().registerEvents( mockPlugin );
 		
-		verify( mockServer ).getPluginManager();
-		verify( mockPluginManager ).registerEvents( plugin, plugin );
+		// verify that events were registered with bukkit
+		verify( mockPluginManager ).registerEvents( mockPlugin, mockPlugin );
+	}
+	
+	
+	/**
+	 * Test that a message is output if no config file exists and the default
+	 * config file is created.
+	 */
+	@Test
+	public void initConfig_NoExistingConfig()
+	{
+		Main mockPlugin = mock( Main.class );
+		Logger mockLogger = mock( Logger.class );
+		
+		when( mockPlugin.getLoggerShim() ).thenReturn( mockLogger );
+		
+		// mut
+		new OreWatchPluginHandler().initConfig( mockPlugin );
+		
+		// verify a message was output and the default config created
+		verify( mockLogger ).info( "No config file exists. Creating a new config file." );
+		verify( mockPlugin ).saveDefaultConfigShim();
+	}
+	
+	
+	/**
+	 * Test that nothing happens when a config already exists.
+	 */
+	public void initConfig_ExistingConfig()
+	{
+		// REDTAG
+		// logger not retrieved
+		// save default config not called
 	}
 	
 	

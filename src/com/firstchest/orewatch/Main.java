@@ -1,5 +1,8 @@
 package com.firstchest.orewatch;
 
+import java.util.logging.Logger;
+
+import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -28,7 +31,6 @@ public class Main extends JavaPlugin implements Listener
 	public Main( OreWatchPluginHandler handler )
 	{
 		_handler = handler;
-		_handler.plugin = this;
 	}
 	
 	
@@ -37,7 +39,10 @@ public class Main extends JavaPlugin implements Listener
 	 */
 	public void onEnable()
 	{
-		_handler.onEnableHandler();
+		_handler.initConfig( this );
+		_handler.loadConfig( this );
+		_handler.loadPlayerLog( this );
+		_handler.registerEvents( this );
 	}
 	
 	
@@ -50,4 +55,21 @@ public class Main extends JavaPlugin implements Listener
 	{
 		_handler.blockBreakEventHandler( event );
 	}
+	
+	
+	/**
+	 * It is not possible to mock and verify JavaPlugin functions because
+	 * PluginBase (org.bukkit.plugin) overrides equals() and hashCode() and declares them
+	 * final, which is not to the liking of PowerMock. See the following:
+	 * 
+	 * https://code.google.com/p/powermock/issues/detail?id=88
+	 * http://stackoverflow.com/questions/17151464/powermock-stackoveflowerror-on-arraylistmultimap
+	 * https://groups.google.com/forum/#!msg/powermock/DpVlG4ueOyw/fMaJX4wIGpsJ
+	 * 
+	 * Any JavaPlugin function that is needed above is shimmed here and the shim
+	 * is used instead so that a mock can be injected for testing. 
+	 */
+	public Server getServerShim() { return this.getServer(); }
+	public Logger getLoggerShim() { return this.getLogger(); }
+	public void saveDefaultConfigShim() { saveDefaultConfig(); }
 }
